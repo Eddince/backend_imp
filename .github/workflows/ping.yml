@@ -8,4 +8,4 @@ jobs:
     steps:
       - name: Enviar ping al backend
         run: |
-          curl -X GET https://tu-backend-en-render.onrender.com/ping
+          curl -X GET https://backend-imp.onrender.com/ping
