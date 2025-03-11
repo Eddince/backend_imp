@@ -1,1 +1,5 @@
 fastapi[all]
+python-multipart
+uvicorn
+pydantic
+typing
