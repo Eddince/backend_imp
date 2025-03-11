@@ -141,4 +141,5 @@ def search_user_codigo(codigo: str):
     try:                                                      #Tratar para no obtener errores
         return list(users)[0]                                    # Obtiene el id pedido 
     except:
-        raise HTTPException(status_code=404, detail="El usuario no existe")
+        #raise HTTPException(status_code=404, detail="El usuario no existe")
+        return
