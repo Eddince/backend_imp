@@ -43,6 +43,10 @@ async def users():
 @app.get("/ping")
 async def ping():
     return {"message": "pong"}
+
+@app.get("/")
+async def root():
+    return {"message": "Bienvenido al backend"}
     
 @app.get("/clientes/buscar/{codigo}")
 async def buscar_cliente(codigo: str ):
