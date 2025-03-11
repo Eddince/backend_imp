@@ -1,5 +1,1 @@
-fastapi
-uvicorn
-status
-passlib
-python-multipart
+fastapi[all]
