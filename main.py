@@ -40,11 +40,15 @@ users_list = [User(id=1,nombre="Juan",codigo= "1234", estado= "Inicial"),
 async def users():
     return users_list
 
-@app.get("/ping", methods = ["GET", "HEAD"])
+@app.get("/ping")
 async def ping():
     return {"message": "pong"}
 
-
+@app.head("/")
+async def root_head():
+    # Personalizar los encabezados
+    headers = {"X-Custom-Header": "Valor personalizado"}
+    return Response(headers=headers)
 
     
 @app.get("/clientes/buscar/{codigo}")
