@@ -40,13 +40,12 @@ users_list = [User(id=1,nombre="Juan",codigo= "1234", estado= "Inicial"),
 async def users():
     return users_list
 
-@app.get("/ping")
+@app.get("/ping", methods = ["GET", "HEAD"])
 async def ping():
     return {"message": "pong"}
 
-@app.get("/")
-async def root():
-    return {"message": "Bienvenido al backend"}
+
+
     
 @app.get("/clientes/buscar/{codigo}")
 async def buscar_cliente(codigo: str ):
