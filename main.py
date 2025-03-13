@@ -17,34 +17,6 @@ SMTP_PORT = 587
 EMAIL_ADDRESS = "eddy.waitforit.hernandez@gmail.com"  # Cambia esto por tu correo
 EMAIL_PASSWORD = "vjfv sdpy pwbw cijt"  # Cambia esto por tu contraseña de aplicación
 
-# Ruta para enviar el archivo por correo
-@app.post("/enviar-correo")
-async def enviar_correo(clientes: list):
-    try:
-        # Crear el mensaje de correo
-        msg = MIMEMultipart()
-        msg["From"] = EMAIL_ADDRESS
-        msg["To"] = "eddy.waitforit.hernandez@gmail.com"  # Correo de destino
-        msg["Subject"] = "Lista de clientes en formato JSON"
-
-        # Convertir la lista de clientes a formato JSON
-        json_data = json.dumps(clientes, indent=2)  # Indentación para mejor legibilidad
-
-        # Agregar el JSON al cuerpo del mensaje
-        msg.attach(MIMEText(json_data, "plain"))
-
-        # Enviar el correo
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.send_message(msg)
-
-        return {"message": "Correo enviado correctamente"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al enviar el correo: {str(e)}")
-
-
-
 
  #Configurar CORS
 app.add_middleware(
@@ -76,6 +48,37 @@ next_id = 4
 users_list = [User(id=1,nombre="Juan",codigo= "1234", estado= "Inicial"),
               User(id=2,nombre="Eddy",codigo= "4567", estado= "En desarrollo"),
               User(id=3,nombre="Ana",codigo= "9101", estado= "Completada")]
+
+
+# Ruta para enviar el archivo por correo
+@app.get("/enviar-correo")
+async def enviar_correo():
+    try:
+        # Crear el mensaje de correo
+        msg = MIMEMultipart()
+        msg["From"] = EMAIL_ADDRESS
+        msg["To"] = "eddy.waitforit.hernandez@gmail.com"  # Correo de destino
+        msg["Subject"] = "Lista de clientes en formato JSON"
+
+        users_serializable = [user.__dict__ for user in users_list]
+
+        # Convertir la lista de clientes a formato JSON
+        json_data = json.dumps(users_serializable, indent=2)  # Indentación para mejor legibilidad
+        print("ok1")
+
+        # Agregar el JSON al cuerpo del mensaje
+        msg.attach(MIMEText(json_data, "plain"))
+        print("ok2")
+        
+        # Enviar el correo
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+
+        return {"message": "Correo enviado correctamente"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al enviar el correo: {str(e)}")
 
 @app.get("/clientes")
 async def users():
