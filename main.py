@@ -1,4 +1,9 @@
-from fastapi import FastAPI, Response, HTTPException
+from fastapi import FastAPI, Response,UploadFile, File, HTTPException
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
@@ -6,6 +11,45 @@ import os
 import uvicorn
 
 app = FastAPI()
+
+# Configuración del servidor SMTP (Gmail)
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_ADDRESS = "eddy.waitforit.hernandez@gmail.com"  # Cambia esto por tu correo
+EMAIL_PASSWORD = "vjfv sdpy pwbw cijt"  # Cambia esto por tu contraseña de aplicación
+
+# Ruta para enviar el archivo por correo
+@app.post("/enviar-correo")
+async def enviar_correo(file: UploadFile = File(...)):
+    try:
+        # Crear el mensaje de correo
+        msg = MIMEMultipart()
+        msg["From"] = EMAIL_ADDRESS
+        msg["To"] = "eddy.waitforit.hernandez@gmail.com"  # Correo de destino
+        msg["Subject"] = "Archivo JSON de clientes"
+
+        # Adjuntar el archivo
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(await file.read())
+        encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition",
+            f"attachment; filename={file.filename}",
+        )
+        msg.attach(part)
+
+        # Enviar el correo
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+
+        return {"message": "Correo enviado correctamente"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al enviar el correo: {str(e)}")
+
+
+
 
  #Configurar CORS
 app.add_middleware(
