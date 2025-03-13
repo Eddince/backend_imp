@@ -60,15 +60,15 @@ async def enviar_correo():
         msg["To"] = "eddy.waitforit.hernandez@gmail.com"  # Correo de destino
         msg["Subject"] = "Lista de clientes en formato JSON"
 
-        users_serializable = [user.__dict__ for user in users_list]
+        #users_serializable = [user.__dict__ for user in users_list]
 
         # Convertir la lista de clientes a formato JSON
-        json_data = json.dumps(users_serializable, indent=2)  # Indentación para mejor legibilidad
-        print("ok1")
-
-        # Agregar el JSON al cuerpo del mensaje
-        msg.attach(MIMEText(json_data, "plain"))
-        print("ok2")
+        #json_data = json.dumps(users_serializable, indent=2)  # Indentación para mejor legibilidad
+        
+        users_text = "\n".join(str(user) for user in users_list)
+        
+        msg.attach(MIMEText(users_text, "plain"))
+        
         
         # Enviar el correo
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
