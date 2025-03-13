@@ -1,9 +1,8 @@
-from fastapi import FastAPI, Response,UploadFile, File, HTTPException
+from fastapi import FastAPI, Response, HTTPException
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
+import json
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
@@ -20,23 +19,19 @@ EMAIL_PASSWORD = "vjfv sdpy pwbw cijt"  # Cambia esto por tu contraseña de apli
 
 # Ruta para enviar el archivo por correo
 @app.post("/enviar-correo")
-async def enviar_correo(file: UploadFile = File(...)):
+async def enviar_correo(clientes: list):
     try:
         # Crear el mensaje de correo
         msg = MIMEMultipart()
         msg["From"] = EMAIL_ADDRESS
         msg["To"] = "eddy.waitforit.hernandez@gmail.com"  # Correo de destino
-        msg["Subject"] = "Archivo JSON de clientes"
+        msg["Subject"] = "Lista de clientes en formato JSON"
 
-        # Adjuntar el archivo
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(await file.read())
-        encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            f"attachment; filename={file.filename}",
-        )
-        msg.attach(part)
+        # Convertir la lista de clientes a formato JSON
+        json_data = json.dumps(clientes, indent=2)  # Indentación para mejor legibilidad
+
+        # Agregar el JSON al cuerpo del mensaje
+        msg.attach(MIMEText(json_data, "plain"))
 
         # Enviar el correo
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
